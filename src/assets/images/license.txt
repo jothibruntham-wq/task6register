@@ -1,0 +1,11 @@
+Model Information:
+* title:	Unitree G1 humanoid (Yes Rigged bone)
+* source:	https://sketchfab.com/3d-models/unitree-g1-humanoid-yes-rigged-bone-a993950a01714f0f801a685449cee1fb
+* author:	KenzoDkohno22T (https://sketchfab.com/KenzoDkohno22T)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Unitree G1 humanoid (Yes Rigged bone)" (https://sketchfab.com/3d-models/unitree-g1-humanoid-yes-rigged-bone-a993950a01714f0f801a685449cee1fb) by KenzoDkohno22T (https://sketchfab.com/KenzoDkohno22T) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

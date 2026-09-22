@@ -1,0 +1,415 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+
+/* =================================
+   MAIN PAGE
+================================= */
+
+.register-page {
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      #273d79 0%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      #681b62 0%,
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #050816,
+      #10172f,
+      #050714
+    );
+}
+
+
+/* =================================
+   ROBOT SCREEN
+================================= */
+
+.robot-screen {
+  position: fixed;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(85, 110, 255, 0.18),
+      transparent 45%
+    ),
+    #050714;
+
+  z-index: 10;
+
+  animation: robotAppear 0.5s ease;
+
+  transition:
+    opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.5s ease;
+}
+
+.robot-screen.exiting {
+  opacity: 0;
+  transform: scale(1.08);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+
+.robot-title {
+  position: absolute;
+
+  top: 50px;
+
+  text-align: center;
+
+  color: white;
+
+  z-index: 2;
+}
+
+
+.robot-title h1 {
+  font-size: 42px;
+
+  letter-spacing: 8px;
+
+  text-shadow:
+    0 0 10px #ffffff,
+    0 0 30px #6575ff;
+}
+
+
+.robot-title p {
+  margin-top: 10px;
+
+  color: rgba(255, 255, 255, 0.6);
+
+  letter-spacing: 3px;
+
+  font-size: 14px;
+}
+
+
+/* =================================
+   CANVAS
+================================= */
+
+.robot-screen canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+
+/* =================================
+   LOADING BAR
+================================= */
+
+.loading-bar {
+  position: absolute;
+
+  bottom: 70px;
+
+  width: 260px;
+
+  height: 5px;
+
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.15);
+
+  overflow: hidden;
+}
+
+
+.loading-progress {
+  height: 100%;
+
+  width: 0%;
+
+  background: white;
+
+  box-shadow:
+    0 0 15px #ffffff,
+    0 0 30px #6475ff;
+
+  transition: width 0.3s ease;
+}
+
+.loading-progress.active {
+  animation: loading 2s linear forwards;
+}
+
+
+/* =================================
+   REGISTER CARD
+================================= */
+
+.register-card {
+  width: 390px;
+
+  padding: 38px 35px;
+
+  border-radius: 25px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  backdrop-filter: blur(20px);
+
+  -webkit-backdrop-filter: blur(20px);
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.55),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+
+  color: white;
+
+  z-index: 5;
+
+  animation:
+    cardReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+
+/* =================================
+   TITLE
+================================= */
+
+.register-card h1 {
+  text-align: center;
+
+  font-size: 32px;
+
+  margin-bottom: 8px;
+
+  letter-spacing: 1px;
+}
+
+
+.register-card > p {
+  text-align: center;
+
+  color: rgba(255, 255, 255, 0.6);
+
+  margin-bottom: 30px;
+}
+
+
+/* =================================
+   INPUT
+================================= */
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+
+.input-group label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 14px;
+
+  color: rgba(255, 255, 255, 0.85);
+}
+
+
+.input-group input {
+  width: 100%;
+
+  height: 48px;
+
+  padding: 0 16px;
+
+  border-radius: 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  color: white;
+
+  font-size: 15px;
+
+  transition: 0.3s;
+}
+
+
+.input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+
+.input-group input:focus {
+  border-color: #8b7cff;
+
+  background: rgba(255, 255, 255, 0.12);
+
+  box-shadow:
+    0 0 0 3px rgba(139, 124, 255, 0.15),
+    0 0 25px rgba(139, 124, 255, 0.2);
+}
+
+
+/* =================================
+   BUTTON
+================================= */
+
+.register-card button {
+  width: 100%;
+
+  height: 50px;
+
+  margin-top: 8px;
+
+  border: none;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #7357ff,
+      #c05cff
+    );
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 30px rgba(124, 92, 255, 0.35);
+
+  transition: 0.3s;
+}
+
+
+.register-card button:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 15px 40px rgba(124, 92, 255, 0.55);
+}
+
+
+.register-card button:active {
+  transform: scale(0.97);
+}
+
+
+/* =================================
+   ANIMATIONS
+================================= */
+
+@keyframes loading {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+
+@keyframes robotAppear {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+@keyframes cardReveal {
+  0% {
+    opacity: 0;
+    transform:
+      translateY(60px)
+      scale(0.88);
+    filter: blur(8px);
+  }
+
+  60% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+
+  100% {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+    filter: blur(0px);
+  }
+}
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media (max-width: 480px) {
+
+  .register-card {
+    width: calc(100% - 30px);
+
+    padding: 30px 24px;
+  }
+
+  .register-card h1 {
+    font-size: 27px;
+  }
+
+  .robot-title h1 {
+    font-size: 30px;
+
+    letter-spacing: 5px;
+  }
+
+}
