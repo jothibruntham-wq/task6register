@@ -137,39 +137,58 @@ body {
    LOADING BAR
 ================================= */
 
-.loading-bar {
+.robot-controls-container {
   position: absolute;
+  bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 20;
+}
 
-  bottom: 70px;
+.continue-btn {
+  padding: 10px 28px;
+  background: linear-gradient(135deg, #7357ff, #c05cff);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(124, 92, 255, 0.45);
+  transition: all 0.3s ease;
+}
 
+.continue-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 35px rgba(124, 92, 255, 0.65);
+}
+
+.loading-bar {
   width: 260px;
-
-  height: 5px;
-
+  height: 6px;
   border-radius: 20px;
-
   background: rgba(255, 255, 255, 0.15);
-
   overflow: hidden;
 }
 
-
 .loading-progress {
   height: 100%;
-
   width: 0%;
-
-  background: white;
-
+  background: linear-gradient(90deg, #6475ff, #c05cff);
   box-shadow:
     0 0 15px #ffffff,
     0 0 30px #6475ff;
-
   transition: width 0.3s ease;
+  border-radius: 20px;
 }
 
 .loading-progress.active {
-  animation: loading 2s linear forwards;
+  box-shadow:
+    0 0 20px #ffffff,
+    0 0 40px #8b7cff;
 }
 
 
@@ -335,6 +354,29 @@ body {
 
 .register-card button:active {
   transform: scale(0.97);
+}
+
+.register-card .view-robot-btn {
+  width: 100%;
+  height: 44px;
+  margin-top: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.register-card .view-robot-btn:hover {
+  background: rgba(139, 124, 255, 0.22);
+  border-color: #8b7cff;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(139, 124, 255, 0.3);
 }
 
 

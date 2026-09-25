@@ -1,53 +1,55 @@
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense, useRef } from "react";
 import "../assets/style/style.css";
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF, useAnimations } from "@react-three/drei";
+import { OrbitControls, useGLTF, useAnimations, useProgress } from "@react-three/drei";
+
+// Robust model URL that works both in development (/) and production (/register/)
+const MODEL_URL = `${(import.meta.env.BASE_URL || "/").replace(/\/$/, "")}/models/robot.glb`;
 
 /* =========================
    ROBOT MODEL
 ========================= */
-
 function Robot({ onLoaded }) {
-  const { scene, animations } = useGLTF("/models/robot.glb");
-
-  const { actions } = useAnimations(animations, scene);
+  const group = useRef();
+  const { scene, animations } = useGLTF(MODEL_URL);
+  const { actions, names } = useAnimations(animations, group);
 
   useEffect(() => {
-    if (animations && animations.length > 0) {
-      const firstAnimation = actions[animations[0].name];
-
-      if (firstAnimation) {
-        firstAnimation.reset();
-        firstAnimation.fadeIn(0.2).play();
+    // Play the first available animation (e.g. "Brooklyn Uprock")
+    if (names && names.length > 0) {
+      const firstAction = actions[names[0]];
+      if (firstAction) {
+        firstAction.reset().fadeIn(0.3).play();
       }
     }
 
     if (onLoaded) {
       onLoaded();
     }
-  }, [actions, animations, onLoaded]);
+  }, [actions, names, onLoaded]);
 
   return (
-    <primitive
-      object={scene}
-      scale={2}
-      position={[0, -1.5, 0]}
-    />
+    <group ref={group}>
+      <primitive
+        object={scene}
+        scale={2.2}
+        position={[0, -1.8, 0]}
+      />
+    </group>
   );
 }
 
-useGLTF.preload("/models/robot.glb");
-
+useGLTF.preload(MODEL_URL);
 
 /* =========================
-   HOME
+   HOME COMPONENT
 ========================= */
-
 function Home() {
   // 'robot' -> 'exiting' -> 'card'
   const [screenPhase, setScreenPhase] = useState("robot");
   const [robotReady, setRobotReady] = useState(false);
+  const { progress } = useProgress();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,33 +58,27 @@ function Home() {
     setRobotReady(true);
   }, []);
 
-  // Fallback: If 3D model takes longer or in case of delay, ensure ready state activates
-  useEffect(() => {
-    const fallbackTimer = setTimeout(() => {
-      setRobotReady(true);
-    }, 1500);
-
-    return () => clearTimeout(fallbackTimer);
+  const handleTransitionToCard = useCallback(() => {
+    setScreenPhase("exiting");
+    setTimeout(() => {
+      setScreenPhase("card");
+    }, 500);
   }, []);
 
-  // When robot is ready, animate for 2 seconds, then transition to register card
+  const handleBackToRobot = useCallback(() => {
+    setScreenPhase("robot");
+  }, []);
+
+  // When robot is loaded and active, animate for 5 seconds then transition to register card
   useEffect(() => {
-    if (!robotReady) return;
+    if (!robotReady || screenPhase !== "robot") return;
 
-    // Robot animates for 2 seconds
     const timer = setTimeout(() => {
-      setScreenPhase("exiting");
-
-      // After exit transition completes (500ms), switch fully to register card
-      const exitTimer = setTimeout(() => {
-        setScreenPhase("card");
-      }, 500);
-
-      return () => clearTimeout(exitTimer);
-    }, 2000);
+      handleTransitionToCard();
+    }, 5000);
 
     return () => clearTimeout(timer);
-  }, [robotReady]);
+  }, [robotReady, screenPhase, handleTransitionToCard]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -95,39 +91,33 @@ function Home() {
     alert(`Registration successful!\nEmail: ${email}`);
   };
 
+  const progressPercent = Math.min(100, Math.round(progress));
+
   return (
     <div className="register-page">
-
       {/* =========================
-          ROBOT SCREEN (Shows & animates for 2 seconds)
+          ROBOT SCREEN (Shows & animates in 3D)
       ========================= */}
-
       {screenPhase !== "card" && (
         <div className={`robot-screen ${screenPhase === "exiting" ? "exiting" : ""}`}>
-
           <div className="robot-title">
             <h1>WELCOME</h1>
-            <p>{robotReady ? "Robot Active" : "Initializing Robot..."}</p>
+            <p>
+              {robotReady
+                ? "Robot Active & Dancing! 🕺"
+                : `Loading Robot... ${progressPercent}%`}
+            </p>
           </div>
 
           <Canvas
             camera={{
-              position: [0, 1, 7],
-              fov: 45
+              position: [0, 1, 6],
+              fov: 45,
             }}
           >
-
-            <ambientLight intensity={2} />
-
-            <directionalLight
-              position={[5, 5, 5]}
-              intensity={3}
-            />
-
-            <pointLight
-              position={[-5, 2, 3]}
-              intensity={2}
-            />
+            <ambientLight intensity={2.2} />
+            <directionalLight position={[5, 5, 5]} intensity={3} />
+            <pointLight position={[-5, 2, 3]} intensity={2} />
 
             <Suspense fallback={null}>
               <Robot onLoaded={handleRobotReady} />
@@ -137,81 +127,77 @@ function Home() {
               enableZoom={false}
               enablePan={false}
               autoRotate
-              autoRotateSpeed={3}
+              autoRotateSpeed={2}
             />
-
           </Canvas>
 
-          <div className="loading-bar">
-            <div className={`loading-progress ${robotReady ? "active" : ""}`}></div>
-          </div>
+          {/* Action buttons and progress bar on robot screen */}
+          <div className="robot-controls-container">
+            <button
+              type="button"
+              className="continue-btn"
+              onClick={handleTransitionToCard}
+            >
+              {robotReady ? "Continue to Register →" : "Skip to Register →"}
+            </button>
 
+            <div className="loading-bar">
+              <div
+                className={`loading-progress ${robotReady ? "active" : ""}`}
+                style={{
+                  width: robotReady ? "100%" : `${Math.max(10, progressPercent)}%`,
+                }}
+              ></div>
+            </div>
+          </div>
         </div>
       )}
 
-
       {/* =========================
-          REGISTER CARD (Comes out after 2 seconds)
+          REGISTER CARD
       ========================= */}
-
       {screenPhase !== "robot" && (
         <div className="register-card">
-
           <h1>Create Account</h1>
-
           <p>Register to continue</p>
 
           <form onSubmit={handleSubmit}>
-
             <div className="input-group">
-
-              <label htmlFor="email">
-                Email
-              </label>
-
+              <label htmlFor="email">Email</label>
               <input
                 id="email"
                 type="email"
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e) =>
-                  setEmail(e.target.value)
-                }
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
-
             </div>
 
-
             <div className="input-group">
-
-              <label htmlFor="password">
-                Password
-              </label>
-
+              <label htmlFor="password">Password</label>
               <input
                 id="password"
                 type="password"
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) =>
-                  setPassword(e.target.value)
-                }
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
-
             </div>
 
+            <button type="submit">Register</button>
 
-            <button type="submit">
-              Register
+            <button
+              type="button"
+              className="view-robot-btn"
+              onClick={handleBackToRobot}
+            >
+              🤖 View Robot Animation
             </button>
-
           </form>
-
         </div>
       )}
-
     </div>
   );
 }
